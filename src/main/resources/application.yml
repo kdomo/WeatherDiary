@@ -8,6 +8,6 @@ spring:
     show-sql: true
     database: mysql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 openweathermap:
   key: 41aa641139fb17fc02d4a25271852979
