@@ -1,5 +1,6 @@
 package com.domo.weatherdiary.service;
 
+import com.domo.weatherdiary.WeatherDiaryApplication;
 import com.domo.weatherdiary.domain.DateWeather;
 import com.domo.weatherdiary.domain.Diary;
 import com.domo.weatherdiary.repository.DateWeatherRepository;
@@ -9,6 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
+    private static final Logger log = LoggerFactory.getLogger(WeatherDiaryApplication.class);
     @Value("${openweathermap.key}")
     private String apiKey;
 
@@ -37,17 +41,20 @@ public class DiaryService {
     @Transactional
     @Scheduled(cron = "0 0 1 * * *")
     public void saveWeatherDate() {
+        log.info("The scheduler imports the data well");
         dateWeatherRepository.save(getWeatherFromApi());
 
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
+        log.info("started to create diary");
         DateWeather dateWeather = getDateWeather(date);
         Diary nowDiary = new Diary();
         nowDiary.setDateWeather(dateWeather);
         nowDiary.setText(text);
         diaryRepository.save(nowDiary);
+        log.info("end to create diary");
     }
 
     private DateWeather getWeatherFromApi() {
@@ -76,6 +83,7 @@ public class DiaryService {
     }
     @Transactional(readOnly = true)
     public List<Diary> readDiary(LocalDate date) {
+        log.debug("read diary");
         return diaryRepository.findAllByDate(date);
     }
 

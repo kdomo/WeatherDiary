@@ -11,3 +11,5 @@ spring:
       ddl-auto: update
 openweathermap:
   key: 41aa641139fb17fc02d4a25271852979
+logging:
+  config: classpath:logback-spring.xml
